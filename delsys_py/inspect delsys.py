@@ -9,7 +9,12 @@ from libemg.streamers import delsys_streamer
 from libemg.data_handler import OnlineDataHandler
 
 if __name__ == "__main__":
-    streamer, sm = delsys_streamer(emg_port=50041, aux_port=50042)
+    streamer, sm = delsys_streamer(emg_port = 50043, 
+                                   aux_port = 50044, 
+                                   imu = True,
+                                   channel_list=[0,2,3])
     odh = OnlineDataHandler(sm)
-    odh.analyze_hardware()
+    #odh.analyze_hardware()
+    # odh.visualize_channels([0,1], 500)
+    odh.visualize()
     
