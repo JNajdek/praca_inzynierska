@@ -10,17 +10,85 @@ import wx
 # begin wxGlade: dependencies
 # end wxGlade
 from datetime import datetime
+from libemg.streamers import delsys_streamer
+from libemg.data_handler import OnlineDataHandler
 import os
 # begin wxGlade: extracode
 # end wxGlade
 
 
+
+class MyDialog(wx.Dialog):
+    def __init__(self, *args, **kwds):
+        # begin wxGlade: MyDialog.__init__
+        kwds["style"] = kwds.get("style", 0) | wx.DEFAULT_DIALOG_STYLE
+        wx.Dialog.__init__(self, *args, **kwds)
+        self.SetTitle("dialog")
+
+        sizer_1 = wx.BoxSizer(wx.VERTICAL)
+
+        label_1 = wx.StaticText(self, wx.ID_ANY, "Select sensors")
+        label_1.SetFont(wx.Font(16, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, 0, "Segoe UI"))
+        sizer_1.Add(label_1, 0, 0, 0)
+
+        sizer_3 = wx.BoxSizer(wx.HORIZONTAL)
+        sizer_1.Add(sizer_3, 1, wx.EXPAND, 0)
+
+        sizer_4 = wx.BoxSizer(wx.VERTICAL)
+        sizer_3.Add(sizer_4, 1, wx.EXPAND, 0)
+
+        self.radio_btn_1 = wx.RadioButton(self, wx.ID_ANY, "Sensor 1")
+        sizer_4.Add(self.radio_btn_1, 0, wx.ALL, 4)
+
+        self.radio_btn_2 = wx.RadioButton(self, wx.ID_ANY, "Sensor 2")
+        sizer_4.Add(self.radio_btn_2, 0, wx.ALL, 4)
+
+        self.radio_btn_3 = wx.RadioButton(self, wx.ID_ANY, "Sensor 3")
+        sizer_4.Add(self.radio_btn_3, 0, wx.ALL, 4)
+
+        self.radio_btn_4 = wx.RadioButton(self, wx.ID_ANY, "Sensor 4")
+        sizer_4.Add(self.radio_btn_4, 0, wx.ALL, 4)
+
+        sizer_5 = wx.BoxSizer(wx.VERTICAL)
+        sizer_3.Add(sizer_5, 1, wx.EXPAND, 0)
+
+        self.radio_btn_5 = wx.RadioButton(self, wx.ID_ANY, "Sensor 5")
+        sizer_5.Add(self.radio_btn_5, 0, wx.ALL, 4)
+
+        self.radio_btn_6 = wx.RadioButton(self, wx.ID_ANY, "Sensor 6")
+        sizer_5.Add(self.radio_btn_6, 0, wx.ALL, 4)
+
+        self.radio_btn_7 = wx.RadioButton(self, wx.ID_ANY, "Sensor 7")
+        sizer_5.Add(self.radio_btn_7, 0, wx.ALL, 4)
+
+        self.radio_btn_8 = wx.RadioButton(self, wx.ID_ANY, "Sensor 8")
+        sizer_5.Add(self.radio_btn_8, 0, wx.ALL, 4)
+
+        sizer_2 = wx.StdDialogButtonSizer()
+        sizer_1.Add(sizer_2, 0, wx.ALIGN_RIGHT | wx.ALL, 4)
+
+        self.button_OK = wx.Button(self, wx.ID_OK, "")
+        self.button_OK.SetDefault()
+        sizer_2.AddButton(self.button_OK)
+
+        self.button_CANCEL = wx.Button(self, wx.ID_CANCEL, "")
+        sizer_2.AddButton(self.button_CANCEL)
+
+        sizer_2.Realize()
+
+        self.SetSizer(sizer_1)
+        sizer_1.Fit(self)
+
+        self.SetAffirmativeId(self.button_OK.GetId())
+        self.SetEscapeId(self.button_CANCEL.GetId())
+
+        self.Layout()
+        # end wxGlade
+
+# end of class MyDialog
 class MyFrame(wx.Frame):
     def __init__(self, *args, **kwds):
         # begin wxGlade: MyFrame.__init__
-        self.last_emg_recording_path = None
-        self.output_dir_path = None
-        self.default_output_path = False
         kwds["style"] = kwds.get("style", 0) | wx.DEFAULT_FRAME_STYLE
         wx.Frame.__init__(self, *args, **kwds)
         self.SetSize((450, 300))
@@ -108,32 +176,32 @@ class MyFrame(wx.Frame):
 
         sizer_9 = wx.StaticBoxSizer(wx.StaticBox(self.nt2, wx.ID_ANY, ""), wx.VERTICAL)
 
-        label_4 = wx.StaticText(sizer_9.GetStaticBox(), wx.ID_ANY, "Present the data")
+        label_4 = wx.StaticText(self.nt2, wx.ID_ANY, "Present the data")
         label_4.SetFont(wx.Font(16, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, 0, "Segoe UI"))
         sizer_9.Add(label_4, 0, 0, 0)
 
         sizer_12 = wx.BoxSizer(wx.VERTICAL)
         sizer_9.Add(sizer_12, 1, wx.EXPAND, 0)
 
-        label_5 = wx.StaticText(sizer_9.GetStaticBox(), wx.ID_ANY, "Signal processing operations")
+        label_5 = wx.StaticText(self.nt2, wx.ID_ANY, "Signal processing operations")
         sizer_12.Add(label_5, 0, 0, 0)
 
         sizer_12.Add((0, 0), 0, 0, 0)
 
-        label_7 = wx.StaticText(sizer_9.GetStaticBox(), wx.ID_ANY, "Select the data sources")
+        label_7 = wx.StaticText(self.nt2, wx.ID_ANY, "Select the data sources")
         label_7.SetFont(wx.Font(9, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, 0, "Segoe UI"))
         sizer_9.Add(label_7, 0, wx.ALL, 4)
 
         sizer_10 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_9.Add(sizer_10, 1, wx.EXPAND, 0)
 
-        self.radio_btn_3 = wx.RadioButton(sizer_9.GetStaticBox(), wx.ID_ANY, "EMG", style=wx.RB_SINGLE)
+        self.radio_btn_3 = wx.RadioButton(self.nt2, wx.ID_ANY, "EMG", style=wx.RB_SINGLE)
         sizer_10.Add(self.radio_btn_3, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 8)
 
-        self.radio_btn_4 = wx.RadioButton(sizer_9.GetStaticBox(), wx.ID_ANY, "IMU", style=wx.RB_SINGLE)
+        self.radio_btn_4 = wx.RadioButton(self.nt2, wx.ID_ANY, "IMU", style=wx.RB_SINGLE)
         sizer_10.Add(self.radio_btn_4, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 8)
 
-        self.button_7 = wx.Button(sizer_9.GetStaticBox(), wx.ID_ANY, "Select sensors\n")
+        self.button_7 = wx.Button(self.nt2, wx.ID_ANY, "Select sensors\n")
         sizer_10.Add(self.button_7, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 8)
 
         sizer_10.Add((0, 0), 0, 0, 0)
@@ -141,11 +209,11 @@ class MyFrame(wx.Frame):
         sizer_11 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_9.Add(sizer_11, 1, wx.EXPAND, 0)
 
-        label_6 = wx.StaticText(sizer_9.GetStaticBox(), wx.ID_ANY, "Select the source of the presented data")
-        sizer_11.Add(label_6, 0, wx.ALL, 8)
+        label_6 = wx.StaticText(self.nt2, wx.ID_ANY, "Select the source of the presented data")
+        sizer_11.Add(label_6, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 8)
 
-        self.combo_box_1 = wx.ComboBox(sizer_9.GetStaticBox(), wx.ID_ANY, choices=["Visualise current recording session", "Visualise last recording session", "Select the file from operating system", ""], style=wx.CB_DROPDOWN)
-        sizer_11.Add(self.combo_box_1, 0, wx.ALL, 8)
+        self.combo_box_1 = wx.ComboBox(self.nt2, wx.ID_ANY, choices=["Visualise current recording session", "Visualise last recording session", "Select the file from operating system", ""], style=wx.CB_DROPDOWN)
+        sizer_11.Add(self.combo_box_1, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 8)
 
         self.nt3 = wx.Panel(self.notebook_1, wx.ID_ANY)
         self.notebook_1.AddPage(self.nt3, "Retransmission")
@@ -158,10 +226,11 @@ class MyFrame(wx.Frame):
 
         self.Layout()
 
-        self.button_5.Bind(wx.EVT_BUTTON, self.on_confirm_pressed)
-        self.button_8.Bind(wx.EVT_BUTTON, self.on_default_pressed)
-        self.button_2.Bind(wx.EVT_BUTTON, self.on_start_pressed)
-        self.button_4.Bind(wx.EVT_BUTTON, self.on_end_pressed)
+        self.Bind(wx.EVT_BUTTON, self.on_select_pressed, self.button_6)
+        self.Bind(wx.EVT_BUTTON, self.on_confirm_pressed, self.button_5)
+        self.Bind(wx.EVT_BUTTON, self.on_default_pressed, self.button_8)
+        self.Bind(wx.EVT_BUTTON, self.on_start_pressed, self.button_2)
+        self.Bind(wx.EVT_BUTTON, self.on_end_pressed, self.button_4)
         # end wxGlade
 
     def on_confirm_pressed(self, event):  # wxGlade: MyFrame.<event_handler>
@@ -182,17 +251,17 @@ class MyFrame(wx.Frame):
     def on_start_pressed(self, event):  # wxGlade: MyFrame.<event_handler>
         current_datetime = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         if self.output_dir_path:
-            target_folder = os.path.join(self.output_dir_path, f"recorded_data_{current_datetime}")
+            self.target_folder = os.path.join(self.output_dir_path, f"recorded_data_{current_datetime}")
 
-            if not os.path.exists(target_folder):
-                os.makedirs(target_folder)
+            if not os.path.exists(self.target_folder):
+                os.makedirs(self.target_folder)
             else:
                 # Create and show the error message box
-                message = f"The target path '{target_folder}' already exists as a file."
+                message = f"The target path '{self.target_folder}' already exists as a file."
                 wx.MessageDialog(None, message, "Error", wx.ICON_ERROR | wx.OK)
-            print(f"Folder '{target_folder}' has been created.")
+            print(f"Folder '{self.target_folder}' has been created.")
             if self.radio_btn_1.GetValue():
-                emg_file_path = os.path.join(target_folder, "emg.csv")
+                emg_file_path = os.path.join(self.target_folder, "emg.csv")
                 # Sprawdzenie, czy plik już istnieje, aby nie dodać nagłówka ponownie
                 file_exists = os.path.isfile(emg_file_path)
                 with open(emg_file_path, "a") as self.emg_file:
@@ -204,17 +273,26 @@ class MyFrame(wx.Frame):
 
                 # Tworzenie lub dopisywanie do pliku emg.csv, jeśli odpowiedni radiobutton jest zaznaczony
             if self.radio_btn_2.GetValue():
-                imu_file_path = os.path.join(target_folder, "imu.csv")
+                imu_file_path = os.path.join(self.target_folder, "imu.csv")
                 file_exists = os.path.isfile(imu_file_path)
                 with open(imu_file_path, "a") as self.imu_file:
                     if not file_exists:
                         self.imu_file.write("timestamp,acceleration_x,acceleration_y,acceleration_z\n")
-                self.emg_file.write("start-imu")
+                        self.imu_file.write("start-imu")
                 print(f"Data appended to '{imu_file_path}'.")
+                
+            streamer, sm = delsys_streamer(emg_port = 50043, 
+                                           aux_port = 50044, 
+                                           imu = True,
+                                           channel_list=[0,2,3])
+            self.odh = OnlineDataHandler(sm)
+            self.odh.log_to_file(file_path=self.target_folder)
+            
         else:
             wx.MessageDialog(self, "No folder was selected!", "Error", wx.OK | wx.ICON_ERROR)
         event.Skip()
     def on_end_pressed(self, event):  # wxGlade: MyFrame.<event_handler>
+        
         if self.imu_file:
             self.last_imu_recording_path = self.imu_file.name
             self.imu_file.close()
@@ -228,6 +306,9 @@ class MyFrame(wx.Frame):
         self.default_output_path = True
         wx.MessageBox("The data will be saved to ./data_records folder", "Validation Result", wx.OK | wx.ICON_INFORMATION)
         self.on_confirm_pressed(event)
+        event.Skip()
+    def on_select_pressed(self, event):  # wxGlade: MyFrame.<event_handler>
+        print("Event handler 'on_select_pressed' not implemented!")
         event.Skip()
 # end of class MyFrame
 
