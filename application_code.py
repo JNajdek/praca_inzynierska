@@ -37,31 +37,31 @@ class MyDialog(wx.Dialog):
         sizer_4 = wx.BoxSizer(wx.VERTICAL)
         sizer_3.Add(sizer_4, 1, wx.EXPAND, 0)
 
-        self.radio_btn_1 = wx.RadioButton(self, wx.ID_ANY, "Sensor 1")
+        self.radio_btn_1 = wx.RadioButton(self, wx.ID_ANY, "Sensor 1", style=wx.RB_SINGLE)
         sizer_4.Add(self.radio_btn_1, 0, wx.ALL, 4)
 
-        self.radio_btn_2 = wx.RadioButton(self, wx.ID_ANY, "Sensor 2")
+        self.radio_btn_2 = wx.RadioButton(self, wx.ID_ANY, "Sensor 2", style=wx.RB_SINGLE)
         sizer_4.Add(self.radio_btn_2, 0, wx.ALL, 4)
 
-        self.radio_btn_3 = wx.RadioButton(self, wx.ID_ANY, "Sensor 3")
+        self.radio_btn_3 = wx.RadioButton(self, wx.ID_ANY, "Sensor 3", style=wx.RB_SINGLE)
         sizer_4.Add(self.radio_btn_3, 0, wx.ALL, 4)
 
-        self.radio_btn_4 = wx.RadioButton(self, wx.ID_ANY, "Sensor 4")
+        self.radio_btn_4 = wx.RadioButton(self, wx.ID_ANY, "Sensor 4", style=wx.RB_SINGLE)
         sizer_4.Add(self.radio_btn_4, 0, wx.ALL, 4)
 
         sizer_5 = wx.BoxSizer(wx.VERTICAL)
         sizer_3.Add(sizer_5, 1, wx.EXPAND, 0)
 
-        self.radio_btn_5 = wx.RadioButton(self, wx.ID_ANY, "Sensor 5")
+        self.radio_btn_5 = wx.RadioButton(self, wx.ID_ANY, "Sensor 5", style=wx.RB_SINGLE)
         sizer_5.Add(self.radio_btn_5, 0, wx.ALL, 4)
 
-        self.radio_btn_6 = wx.RadioButton(self, wx.ID_ANY, "Sensor 6")
+        self.radio_btn_6 = wx.RadioButton(self, wx.ID_ANY, "Sensor 6", style=wx.RB_SINGLE)
         sizer_5.Add(self.radio_btn_6, 0, wx.ALL, 4)
 
-        self.radio_btn_7 = wx.RadioButton(self, wx.ID_ANY, "Sensor 7")
+        self.radio_btn_7 = wx.RadioButton(self, wx.ID_ANY, "Sensor 7", style=wx.RB_SINGLE)
         sizer_5.Add(self.radio_btn_7, 0, wx.ALL, 4)
 
-        self.radio_btn_8 = wx.RadioButton(self, wx.ID_ANY, "Sensor 8")
+        self.radio_btn_8 = wx.RadioButton(self, wx.ID_ANY, "Sensor 8", style=wx.RB_SINGLE)
         sizer_5.Add(self.radio_btn_8, 0, wx.ALL, 4)
 
         sizer_2 = wx.StdDialogButtonSizer()
@@ -83,8 +83,58 @@ class MyDialog(wx.Dialog):
         self.SetEscapeId(self.button_CANCEL.GetId())
 
         self.Layout()
-        # end wxGlade
 
+        self.Bind(wx.EVT_RADIOBUTTON, self.on_radio_pressed, self.radio_btn_1)
+        self.Bind(wx.EVT_RADIOBUTTON, self.on_radio_pressed, self.radio_btn_2)
+        self.Bind(wx.EVT_RADIOBUTTON, self.on_radio_pressed, self.radio_btn_3)
+        self.Bind(wx.EVT_RADIOBUTTON, self.on_radio_pressed, self.radio_btn_4)
+        self.Bind(wx.EVT_RADIOBUTTON, self.on_radio_pressed, self.radio_btn_5)
+        self.Bind(wx.EVT_RADIOBUTTON, self.on_radio_pressed, self.radio_btn_6)
+        self.Bind(wx.EVT_RADIOBUTTON, self.on_radio_pressed, self.radio_btn_7)
+        self.Bind(wx.EVT_RADIOBUTTON, self.on_radio_pressed, self.radio_btn_8)
+        self.Bind(wx.EVT_BUTTON, self.on_ok_pressed, self.button_OK)
+        # end wxGlade
+        self.radio_btn_1.SetValue(False)
+        self.radio_btn_2.SetValue(False)
+        self.radio_btn_3.SetValue(False)
+        self.radio_btn_4.SetValue(False)
+        self.radio_btn_5.SetValue(False)
+        self.radio_btn_6.SetValue(False)
+        self.radio_btn_7.SetValue(False)
+        self.radio_btn_8.SetValue(False)
+        self.active_sensors = []
+
+    def on_ok_pressed(self, event):  # wxGlade: MyDialog.<event_handler>
+        if self.radio_btn_1.GetValue():
+            self.active_sensors.append(1)
+        if self.radio_btn_2.GetValue():
+            self.active_sensors.append(2)
+        if self.radio_btn_3.GetValue():
+            self.active_sensors.append(3)
+        if self.radio_btn_4.GetValue():
+            self.active_sensors.append(4)
+        if self.radio_btn_5.GetValue():
+            self.active_sensors.append(5)
+        if self.radio_btn_6.GetValue():
+            self.active_sensors.append(6)
+        if self.radio_btn_7.GetValue():
+            self.active_sensors.append(7)
+        if self.radio_btn_8.GetValue():
+            self.active_sensors.append(8)
+        self.EndModal(wx.ID_OK)
+        
+
+        event.Skip()
+    def on_radio_pressed(self, event):
+        # wxGlade: MyDialog.<event_handler>
+        radio = event.GetEventObject()
+        print(radio.GetLabel())
+        print(radio.GetValue())
+        if radio.GetValue():
+            radio.SetValue(False)
+        else:
+            radio.SetValue(True)
+        event.Skip()
 # end of class MyDialog
 class MyFrame(wx.Frame):
     def __init__(self, *args, **kwds):
@@ -232,7 +282,7 @@ class MyFrame(wx.Frame):
         self.Bind(wx.EVT_BUTTON, self.on_start_pressed, self.button_2)
         self.Bind(wx.EVT_BUTTON, self.on_end_pressed, self.button_4)
         # end wxGlade
-
+        self.active_sensors = []
     def on_confirm_pressed(self, event):  # wxGlade: MyFrame.<event_handler>
         if not self.default_output_path:
             path = self.text_ctrl_1.GetValue()
@@ -308,7 +358,10 @@ class MyFrame(wx.Frame):
         self.on_confirm_pressed(event)
         event.Skip()
     def on_select_pressed(self, event):  # wxGlade: MyFrame.<event_handler>
-        print("Event handler 'on_select_pressed' not implemented!")
+        dialog = MyDialog(self)
+        if dialog.ShowModal() == wx.ID_OK:
+            self.active_sensors = dialog.active_sensors
+            print(self.active_sensors)
         event.Skip()
 # end of class MyFrame
 
