@@ -9,13 +9,15 @@ import wx
 
 # begin wxGlade: dependencies
 # end wxGlade
+import numpy as np
+import serial
+import time
 from datetime import datetime
-# from libemg.streamers import delsys_streamer
-# from libemg.data_handler import OnlineDataHandler
+from libemg.streamers import delsys_streamer
+from libemg.data_handler import OnlineDataHandler
 import os
 # begin wxGlade: extracode
 # end wxGlade
-
 
 
 class MyDialog(wx.Dialog):
@@ -87,15 +89,15 @@ class MyDialog(wx.Dialog):
 
         self.Layout()
 
-        self.toggle_btn_1.Bind(wx.EVT_TOGGLEBUTTON, self.on_toggle_pressed)
-        self.toggle_btn_2.Bind(wx.EVT_TOGGLEBUTTON, self.on_toggle_pressed)
-        self.toggle_btn_3.Bind(wx.EVT_TOGGLEBUTTON, self.on_toggle_pressed)
-        self.toggle_btn_4.Bind(wx.EVT_TOGGLEBUTTON, self.on_toggle_pressed)
-        self.toggle_btn_5.Bind(wx.EVT_TOGGLEBUTTON, self.on_toggle_pressed)
-        self.toggle_btn_6.Bind(wx.EVT_TOGGLEBUTTON, self.on_toggle_pressed)
-        self.toggle_btn_7.Bind(wx.EVT_TOGGLEBUTTON, self.on_toggle_pressed)
-        self.toggle_btn_8.Bind(wx.EVT_TOGGLEBUTTON, self.on_toggle_pressed)
-        self.button_OK.Bind(wx.EVT_BUTTON, self.on_ok_pressed)
+        self.Bind(wx.EVT_TOGGLEBUTTON, self.on_toggle_pressed, self.toggle_btn_1)
+        self.Bind(wx.EVT_TOGGLEBUTTON, self.on_toggle_pressed, self.toggle_btn_2)
+        self.Bind(wx.EVT_TOGGLEBUTTON, self.on_toggle_pressed, self.toggle_btn_3)
+        self.Bind(wx.EVT_TOGGLEBUTTON, self.on_toggle_pressed, self.toggle_btn_4)
+        self.Bind(wx.EVT_TOGGLEBUTTON, self.on_toggle_pressed, self.toggle_btn_5)
+        self.Bind(wx.EVT_TOGGLEBUTTON, self.on_toggle_pressed, self.toggle_btn_6)
+        self.Bind(wx.EVT_TOGGLEBUTTON, self.on_toggle_pressed, self.toggle_btn_7)
+        self.Bind(wx.EVT_TOGGLEBUTTON, self.on_toggle_pressed, self.toggle_btn_8)
+        self.Bind(wx.EVT_BUTTON, self.on_ok_pressed, self.button_OK)
         # end wxGlade
         
         self.active_sensors = []
@@ -122,25 +124,8 @@ class MyDialog(wx.Dialog):
 
         event.Skip()
 
-    def on_toggle_pressed(self, event):
-        radio = event.GetEventObject()
-
-        # Sprawdź obecny stan
-        current_state = self.radio_states[radio]
-
-        # Odwróć stan
-        new_state = not current_state
-
-        # Ręcznie ustaw wartość, mimo domyślnego zachowania radiobuttonów
-        radio.SetValue(new_state)
-        self.radio_states[radio] = new_state
-
-        # Wyświetl informację w konsoli
-        print(f"{radio.GetLabel()} is now {'checked' if new_state else 'unchecked'}")
     def on_toggle_pressed(self, event):  # wxGlade: MyDialog.<event_handler>
-        toggle = event.GetEventObject()
-        print(toggle.GetLabel())
-        print(toggle.GetValue())
+        print("Event handler 'on_toggle_pressed' not implemented!")
         event.Skip()
 # end of class MyDialog
 class MyFrame(wx.Frame):
@@ -180,11 +165,11 @@ class MyFrame(wx.Frame):
         sizer_8 = wx.GridSizer(1, 4, 0, 0)
         sizer_7.Add(sizer_8, 1, wx.EXPAND, 0)
 
-        self.radio_btn_1 = wx.RadioButton(self.nt1, wx.ID_ANY, "EMG", style=wx.RB_SINGLE)
-        sizer_8.Add(self.radio_btn_1, 0, wx.ALL, 4)
+        self.check_box_1 = wx.CheckBox(self.nt1, wx.ID_ANY, "EMG")
+        sizer_8.Add(self.check_box_1, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 4)
 
-        self.radio_btn_2 = wx.RadioButton(self.nt1, wx.ID_ANY, "IMU", style=wx.RB_SINGLE)
-        sizer_8.Add(self.radio_btn_2, 0, wx.ALL, 4)
+        self.check_box_2 = wx.CheckBox(self.nt1, wx.ID_ANY, "IMU")
+        sizer_8.Add(self.check_box_2, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 4)
 
         self.button_6 = wx.Button(self.nt1, wx.ID_ANY, "Select sensors\n")
         sizer_8.Add(self.button_6, 0, wx.ALL, 4)
@@ -233,47 +218,73 @@ class MyFrame(wx.Frame):
 
         sizer_9 = wx.StaticBoxSizer(wx.StaticBox(self.nt2, wx.ID_ANY, ""), wx.VERTICAL)
 
-        label_4 = wx.StaticText(sizer_9.GetStaticBox(), wx.ID_ANY, "Present the data")
+        label_4 = wx.StaticText(self.nt2, wx.ID_ANY, "Present the data")
         label_4.SetFont(wx.Font(16, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, 0, "Segoe UI"))
         sizer_9.Add(label_4, 0, 0, 0)
 
         sizer_12 = wx.BoxSizer(wx.VERTICAL)
         sizer_9.Add(sizer_12, 1, wx.EXPAND, 0)
 
-        label_5 = wx.StaticText(sizer_9.GetStaticBox(), wx.ID_ANY, "Signal processing operations")
+        label_5 = wx.StaticText(self.nt2, wx.ID_ANY, "Signal processing operations")
         sizer_12.Add(label_5, 0, 0, 0)
 
         sizer_12.Add((0, 0), 0, 0, 0)
 
-        label_7 = wx.StaticText(sizer_9.GetStaticBox(), wx.ID_ANY, "Select the data sources")
+        label_7 = wx.StaticText(self.nt2, wx.ID_ANY, "Select the data sources")
         label_7.SetFont(wx.Font(9, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, 0, "Segoe UI"))
         sizer_9.Add(label_7, 0, wx.ALL, 4)
 
-        sizer_10 = wx.BoxSizer(wx.HORIZONTAL)
-        sizer_9.Add(sizer_10, 1, wx.EXPAND, 0)
+        grid_sizer_1 = wx.GridSizer(1, 3, 0, 0)
+        sizer_9.Add(grid_sizer_1, 1, wx.EXPAND, 0)
 
-        self.radio_btn_3 = wx.RadioButton(sizer_9.GetStaticBox(), wx.ID_ANY, "EMG", style=wx.RB_SINGLE)
-        sizer_10.Add(self.radio_btn_3, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 8)
+        self.checkbox_3 = wx.CheckBox(self.nt2, wx.ID_ANY, "EMG")
+        grid_sizer_1.Add(self.checkbox_3, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 4)
 
-        self.radio_btn_4 = wx.RadioButton(sizer_9.GetStaticBox(), wx.ID_ANY, "IMU", style=wx.RB_SINGLE)
-        sizer_10.Add(self.radio_btn_4, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 8)
+        self.checkbox_4 = wx.CheckBox(self.nt2, wx.ID_ANY, "IMU")
+        grid_sizer_1.Add(self.checkbox_4, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 4)
 
-        self.button_7 = wx.Button(sizer_9.GetStaticBox(), wx.ID_ANY, "Select sensors\n")
-        sizer_10.Add(self.button_7, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 8)
-
-        sizer_10.Add((0, 0), 0, 0, 0)
+        self.button_7 = wx.Button(self.nt2, wx.ID_ANY, "Select sensors\n")
+        grid_sizer_1.Add(self.button_7, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 8)
 
         sizer_11 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_9.Add(sizer_11, 1, wx.EXPAND, 0)
 
-        label_6 = wx.StaticText(sizer_9.GetStaticBox(), wx.ID_ANY, "Select the source of the presented data")
+        label_6 = wx.StaticText(self.nt2, wx.ID_ANY, "Select the source of the presented data")
         sizer_11.Add(label_6, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 8)
 
-        self.combo_box_1 = wx.ComboBox(sizer_9.GetStaticBox(), wx.ID_ANY, choices=["Visualise current recording session", "Visualise last recording session", "Select the file from operating system", ""], style=wx.CB_DROPDOWN)
+        self.combo_box_1 = wx.ComboBox(self.nt2, wx.ID_ANY, choices=["Visualise current recording session", "Visualise last recording session", "Select the file from operating system", ""], style=wx.CB_DROPDOWN)
         sizer_11.Add(self.combo_box_1, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 8)
 
         self.nt3 = wx.Panel(self.notebook_1, wx.ID_ANY)
         self.notebook_1.AddPage(self.nt3, "Retransmission")
+
+        sizer_10 = wx.BoxSizer(wx.VERTICAL)
+
+        label_8 = wx.StaticText(self.nt3, wx.ID_ANY, "Retransmission")
+        sizer_10.Add(label_8, 0, 0, 0)
+
+        sizer_13 = wx.BoxSizer(wx.VERTICAL)
+        sizer_10.Add(sizer_13, 1, wx.EXPAND, 0)
+
+        label_9 = wx.StaticText(self.nt3, wx.ID_ANY, "Select the data sources")
+        sizer_13.Add(label_9, 0, wx.ALL, 4)
+
+        grid_sizer_2 = wx.GridSizer(1, 3, 0, 0)
+        sizer_13.Add(grid_sizer_2, 1, wx.EXPAND, 0)
+
+        self.checkbox_5 = wx.CheckBox(self.nt3, wx.ID_ANY, "EMG")
+        grid_sizer_2.Add(self.checkbox_5, 0, wx.ALL, 4)
+
+        self.checkbox_6 = wx.CheckBox(self.nt3, wx.ID_ANY, "IMU")
+        grid_sizer_2.Add(self.checkbox_6, 0, wx.ALL, 4)
+
+        self.button_9 = wx.Button(self.nt3, wx.ID_ANY, "Select Sensors")
+        grid_sizer_2.Add(self.button_9, 0, wx.ALL, 4)
+
+        self.button_12 = wx.ToggleButton(self.nt3, wx.ID_ANY, "START/STOP")
+        sizer_10.Add(self.button_12, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALL, 16)
+
+        self.nt3.SetSizer(sizer_10)
 
         self.nt2.SetSizer(sizer_9)
 
@@ -283,11 +294,16 @@ class MyFrame(wx.Frame):
 
         self.Layout()
 
-        self.button_6.Bind(wx.EVT_BUTTON, self.on_select_pressed)
-        self.button_5.Bind(wx.EVT_BUTTON, self.on_confirm_pressed)
-        self.button_8.Bind(wx.EVT_BUTTON, self.on_default_pressed)
-        self.button_2.Bind(wx.EVT_BUTTON, self.on_start_pressed)
-        self.button_4.Bind(wx.EVT_BUTTON, self.on_end_pressed)
+        self.Bind(wx.EVT_BUTTON, self.on_select_pressed, self.button_6)
+        self.Bind(wx.EVT_BUTTON, self.on_confirm_pressed, self.button_5)
+        self.Bind(wx.EVT_BUTTON, self.on_default_pressed, self.button_8)
+        self.Bind(wx.EVT_BUTTON, self.on_start_pressed, self.button_2)
+        self.Bind(wx.EVT_BUTTON, self.on_pause_pressed, self.button_1)
+        self.Bind(wx.EVT_BUTTON, self.on_renew_pressed, self.button_3)
+        self.Bind(wx.EVT_BUTTON, self.on_end_pressed, self.button_4)
+        self.Bind(wx.EVT_BUTTON, self.on_select_pressed, self.button_7)
+        self.Bind(wx.EVT_BUTTON, self.on_select_pressed, self.button_9)
+        self.Bind(wx.EVT_TOGGLEBUTTON, self.on_start_stop_retr, self.button_12)
         # end wxGlade
         self.active_sensors = []
     def on_confirm_pressed(self, event):  # wxGlade: MyFrame.<event_handler>
@@ -317,30 +333,22 @@ class MyFrame(wx.Frame):
                 message = f"The target path '{self.target_folder}' already exists as a file."
                 wx.MessageDialog(None, message, "Error", wx.ICON_ERROR | wx.OK)
             print(f"Folder '{self.target_folder}' has been created.")
-            if self.radio_btn_1.GetValue():
-                emg_file_path = os.path.join(self.target_folder, "emg.csv")
-                # Sprawdzenie, czy plik już istnieje, aby nie dodać nagłówka ponownie
-                file_exists = os.path.isfile(emg_file_path)
-                with open(emg_file_path, "a") as self.emg_file:
-                    if not file_exists:
-                        self.emg_file.write("timestamp,emg_signal\n")
-
-                    self.emg_file.write("start-emg")
-                print(f"Data appended to '{emg_file_path}'.")
+            
+            if self.check_box_1.GetValue():
+                is_emg_used = True
+            else:
+                is_emg_used = False
 
                 # Tworzenie lub dopisywanie do pliku emg.csv, jeśli odpowiedni radiobutton jest zaznaczony
-            if self.radio_btn_2.GetValue():
-                imu_file_path = os.path.join(self.target_folder, "imu.csv")
-                file_exists = os.path.isfile(imu_file_path)
-                with open(imu_file_path, "a") as self.imu_file:
-                    if not file_exists:
-                        self.imu_file.write("timestamp,acceleration_x,acceleration_y,acceleration_z\n")
-                        self.imu_file.write("start-imu")
-                print(f"Data appended to '{imu_file_path}'.")
+            if self.check_box_2.GetValue():
+                is_imu_used = True
+            else:
+                is_imu_used = False
                 
             streamer, sm = delsys_streamer(emg_port = 50043,
                                            aux_port = 50044,
-                                           imu = True,
+                                           imu = is_imu_used,
+                                           emg = is_emg_used,
                                            channel_list=self.active_sensors)
             self.odh = OnlineDataHandler(sm)
             self.odh.log_to_file(file_path=self.target_folder)
@@ -359,6 +367,7 @@ class MyFrame(wx.Frame):
         self.output_dir_path = None
         self.default_output_path = False
         self.active_sensors=[]
+        self.odh.stop_log()
         event.Skip()
     def on_default_pressed(self, event):  # wxGlade: MyFrame.<event_handler>
         self.default_output_path = True
@@ -370,6 +379,19 @@ class MyFrame(wx.Frame):
         if dialog.ShowModal() == wx.ID_OK:
             self.active_sensors = dialog.active_sensors
             print(self.active_sensors)
+        event.Skip()
+    def on_default_retransmission_pressed(self, event):  # wxGlade: MyFrame.<event_handler>
+        self.default_retransmission = True
+        event.Skip()
+    def on_start_stop_retr(self, event):  # wxGlade: MyFrame.<event_handler>
+        if self.default_retransmission:
+            pass
+        event.Skip()
+    def on_pause_pressed(self, event):  # wxGlade: MyFrame.<event_handler>
+        self.odh.stop_log()
+        event.Skip()
+    def on_renew_pressed(self, event):  # wxGlade: MyFrame.<event_handler>
+        self.odh.log_to_file(file_path=self.target_folder)
         event.Skip()
 # end of class MyFrame
 
