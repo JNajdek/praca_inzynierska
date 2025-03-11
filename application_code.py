@@ -13,31 +13,83 @@ import numpy as np
 import serial
 import time
 from datetime import datetime
+
+from pyexpat import features
+
+from libemg.feature_extractor import FeatureExtractor
 from libemg.streamers import delsys_streamer
 from libemg.data_handler import OnlineDataHandler
+
 import os
 # begin wxGlade: extracode
 # end wxGlade
 
 
 
-class DialogOffline(wx.Dialog):
+
+
+class FeaturesDialog(wx.Dialog):
     def __init__(self, *args, **kwds):
-        # begin wxGlade: DialogOffline.__init__
+        self.selected_features = []
+        # begin wxGlade: FeaturesDialog.__init__
         kwds["style"] = kwds.get("style", 0) | wx.DEFAULT_DIALOG_STYLE
         wx.Dialog.__init__(self, *args, **kwds)
-        self.SetTitle("dialog_1")
+        self.SetTitle("dialog")
 
         sizer_1 = wx.BoxSizer(wx.VERTICAL)
 
-        sizer_1.Add((0, 0), 0, 0, 0)
+        label_1 = wx.StaticText(self, wx.ID_ANY, "Select feature groups")
+        label_1.SetFont(wx.Font(14, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, 0, "Segoe UI"))
+        sizer_1.Add(label_1, 0, wx.ALL, 12)
+
+        sizer_3 = wx.BoxSizer(wx.HORIZONTAL)
+        sizer_1.Add(sizer_3, 1, wx.EXPAND, 0)
+
+        sizer_4 = wx.BoxSizer(wx.VERTICAL)
+        sizer_3.Add(sizer_4, 1, wx.EXPAND, 0)
+
+        self.checkbox_1 = wx.CheckBox(self, wx.ID_ANY, "HTD")
+        sizer_4.Add(self.checkbox_1, 0, wx.ALL, 4)
+
+        self.checkbox_2 = wx.CheckBox(self, wx.ID_ANY, "TSTD")
+        sizer_4.Add(self.checkbox_2, 0, wx.ALL, 4)
+
+        self.checkbox_3 = wx.CheckBox(self, wx.ID_ANY, "DFTR")
+        sizer_4.Add(self.checkbox_3, 0, wx.ALL, 4)
+
+        self.checkbox_4 = wx.CheckBox(self, wx.ID_ANY, "ITD")
+        sizer_4.Add(self.checkbox_4, 0, wx.ALL, 4)
+
+        self.checkbox_5 = wx.CheckBox(self, wx.ID_ANY, "HJORTH")
+        sizer_4.Add(self.checkbox_5, 0, wx.ALL, 4)
+
+        sizer_5 = wx.BoxSizer(wx.VERTICAL)
+        sizer_3.Add(sizer_5, 1, wx.EXPAND, 0)
+
+        self.checkbox_6 = wx.CheckBox(self, wx.ID_ANY, "LS4")
+        sizer_5.Add(self.checkbox_6, 0, wx.ALL, 4)
+
+        self.checkbox_7 = wx.CheckBox(self, wx.ID_ANY, "LS9")
+        sizer_5.Add(self.checkbox_7, 0, wx.ALL, 4)
+
+        self.checkbox_8 = wx.CheckBox(self, wx.ID_ANY, "TDPSD")
+        sizer_5.Add(self.checkbox_8, 0, wx.ALL, 4)
+
+        self.checkbox_9 = wx.CheckBox(self, wx.ID_ANY, "TDAR")
+        sizer_5.Add(self.checkbox_9, 0, wx.ALL, 4)
+
+        self.checkbox_10 = wx.CheckBox(self, wx.ID_ANY, "COMB")
+        sizer_5.Add(self.checkbox_10, 0, wx.ALL, 4)
+
+        self.checkbox_11 = wx.CheckBox(self, wx.ID_ANY, "MSWT")
+        sizer_5.Add(self.checkbox_11, 0, wx.ALL, 4)
 
         sizer_2 = wx.StdDialogButtonSizer()
         sizer_1.Add(sizer_2, 0, wx.ALIGN_RIGHT | wx.ALL, 4)
 
-        self.button_SAVE = wx.Button(self, wx.ID_SAVE, "")
-        self.button_SAVE.SetDefault()
-        sizer_2.AddButton(self.button_SAVE)
+        self.button_OK = wx.Button(self, wx.ID_OK, "")
+        self.button_OK.SetDefault()
+        sizer_2.AddButton(self.button_OK)
 
         self.button_CANCEL = wx.Button(self, wx.ID_CANCEL, "")
         sizer_2.AddButton(self.button_CANCEL)
@@ -47,16 +99,45 @@ class DialogOffline(wx.Dialog):
         self.SetSizer(sizer_1)
         sizer_1.Fit(self)
 
-        self.SetAffirmativeId(self.button_SAVE.GetId())
+        self.SetAffirmativeId(self.button_OK.GetId())
         self.SetEscapeId(self.button_CANCEL.GetId())
 
         self.Layout()
+
+        self.Bind(wx.EVT_BUTTON, self.on_ok_pressed, self.button_OK)
         # end wxGlade
 
-# end of class DialogOffline
-class MyDialog(wx.Dialog):
+    def on_ok_pressed(self, event):  # wxGlade: FeaturesDialog.<event_handler>
+        if self.checkbox_1.GetValue():
+            self.selected_features.append(self.checkbox_1.GetLabel())
+        if self.checkbox_2.GetValue():
+            self.selected_features.append(self.checkbox_2.GetLabel())
+        if self.checkbox_3.GetValue():
+            self.selected_features.append(self.checkbox_3.GetLabel())
+        if self.checkbox_4.GetValue():
+            self.selected_features.append(self.checkbox_4.GetLabel())
+        if self.checkbox_5.GetValue():
+            self.selected_features.append(self.checkbox_5.GetLabel())
+        if self.checkbox_6.GetValue():
+            self.selected_features.append(self.checkbox_6.GetLabel())
+        if self.checkbox_7.GetValue():
+            self.selected_features.append(self.checkbox_7.GetLabel())
+        if self.checkbox_8.GetValue():
+            self.selected_features.append(self.checkbox_8.GetLabel())
+        if self.checkbox_9.GetValue():
+            self.selected_features.append(self.checkbox_9.GetLabel())
+        if self.checkbox_10.GetValue():
+            self.selected_features.append(self.checkbox_10.GetLabel())
+        if self.checkbox_11.GetValue():
+            self.selected_features.append(self.checkbox_11.GetLabel())
+        print(self.selected_features)
+        self.EndModal(wx.ID_OK)
+        event.Skip()
+# end of class FeaturesDialog
+class SensorsDialog(wx.Dialog):
     def __init__(self, *args, **kwds):
-        # begin wxGlade: MyDialog.__init__
+        self.active_sensors = []
+        # begin wxGlade: SensorsDialog.__init__
         kwds["style"] = kwds.get("style", 0) | wx.DEFAULT_DIALOG_STYLE
         wx.Dialog.__init__(self, *args, **kwds)
         self.SetTitle("dialog")
@@ -123,47 +204,68 @@ class MyDialog(wx.Dialog):
 
         self.Layout()
 
-        self.Bind(wx.EVT_TOGGLEBUTTON, self.on_toggle_pressed, self.toggle_btn_1)
-        self.Bind(wx.EVT_TOGGLEBUTTON, self.on_toggle_pressed, self.toggle_btn_2)
-        self.Bind(wx.EVT_TOGGLEBUTTON, self.on_toggle_pressed, self.toggle_btn_3)
-        self.Bind(wx.EVT_TOGGLEBUTTON, self.on_toggle_pressed, self.toggle_btn_4)
-        self.Bind(wx.EVT_TOGGLEBUTTON, self.on_toggle_pressed, self.toggle_btn_5)
-        self.Bind(wx.EVT_TOGGLEBUTTON, self.on_toggle_pressed, self.toggle_btn_6)
-        self.Bind(wx.EVT_TOGGLEBUTTON, self.on_toggle_pressed, self.toggle_btn_7)
-        self.Bind(wx.EVT_TOGGLEBUTTON, self.on_toggle_pressed, self.toggle_btn_8)
         self.Bind(wx.EVT_BUTTON, self.on_ok_pressed, self.button_OK)
         # end wxGlade
-        
-        self.active_sensors = []
 
-    def on_ok_pressed(self, event):  # wxGlade: MyDialog.<event_handler>
+
+    def on_ok_pressed(self, event):  # wxGlade: SensorsDialog.<event_handler>
         if self.toggle_btn_1.GetValue():
-            self.active_sensors.append(1)
+            self.active_sensors.append(0)
         if self.toggle_btn_2.GetValue():
-            self.active_sensors.append(2)
+            self.active_sensors.append(1)
         if self.toggle_btn_3.GetValue():
-            self.active_sensors.append(3)
+            self.active_sensors.append(2)
         if self.toggle_btn_4.GetValue():
-            self.active_sensors.append(4)
+            self.active_sensors.append(3)
         if self.toggle_btn_5.GetValue():
-            self.active_sensors.append(5)
+            self.active_sensors.append(4)
         if self.toggle_btn_6.GetValue():
-            self.active_sensors.append(6)
+            self.active_sensors.append(5)
         if self.toggle_btn_7.GetValue():
-            self.active_sensors.append(7)
+            self.active_sensors.append(6)
         if self.toggle_btn_8.GetValue():
-            self.active_sensors.append(8)
+            self.active_sensors.append(7)
         self.EndModal(wx.ID_OK)
-        
-
         event.Skip()
 
-    def on_toggle_pressed(self, event):  # wxGlade: MyDialog.<event_handler>
-        print("Event handler 'on_toggle_pressed' not implemented!")
-        event.Skip()
-# end of class MyDialog
+# end of class SensorsDialog
+class DialogOffline(wx.Dialog):
+    def __init__(self, *args, **kwds):
+        # begin wxGlade: DialogOffline.__init__
+        kwds["style"] = kwds.get("style", 0) | wx.DEFAULT_DIALOG_STYLE
+        wx.Dialog.__init__(self, *args, **kwds)
+        self.SetTitle("dialog_1")
+
+        sizer_1 = wx.BoxSizer(wx.VERTICAL)
+
+        sizer_1.Add((0, 0), 0, 0, 0)
+
+        sizer_2 = wx.StdDialogButtonSizer()
+        sizer_1.Add(sizer_2, 0, wx.ALIGN_RIGHT | wx.ALL, 4)
+
+        self.button_SAVE = wx.Button(self, wx.ID_SAVE, "")
+        self.button_SAVE.SetDefault()
+        sizer_2.AddButton(self.button_SAVE)
+
+        self.button_CANCEL = wx.Button(self, wx.ID_CANCEL, "")
+        sizer_2.AddButton(self.button_CANCEL)
+
+        sizer_2.Realize()
+
+        self.SetSizer(sizer_1)
+        sizer_1.Fit(self)
+
+        self.SetAffirmativeId(self.button_SAVE.GetId())
+        self.SetEscapeId(self.button_CANCEL.GetId())
+
+        self.Layout()
+        # end wxGlade
+
+# end of class DialogOffline
+
 class MyFrame(wx.Frame):
     def __init__(self, *args, **kwds):
+        self.selected_features = []
         # begin wxGlade: MyFrame.__init__
         kwds["style"] = kwds.get("style", 0) | wx.DEFAULT_FRAME_STYLE
         wx.Frame.__init__(self, *args, **kwds)
@@ -268,8 +370,17 @@ class MyFrame(wx.Frame):
         sizer_14 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_12.Add(sizer_14, 1, wx.EXPAND, 0)
 
-        self.button_11 = wx.ToggleButton(self.nt2, wx.ID_ANY, "amplitude")
-        sizer_14.Add(self.button_11, 0, 0, 0)
+        self.button_13 = wx.ToggleButton(self.nt2, wx.ID_ANY, " Amplitude\nChannnels Combined")
+        sizer_14.Add(self.button_13, 0, 0, 0)
+
+        self.button_14 = wx.ToggleButton(self.nt2, wx.ID_ANY, "Amplitude\nSeparate Channels")
+        sizer_14.Add(self.button_14, 0, 0, 0)
+
+        self.button_15 = wx.ToggleButton(self.nt2, wx.ID_ANY, "Heatmap")
+        sizer_14.Add(self.button_15, 0, 0, 0)
+
+        self.button_16 = wx.ToggleButton(self.nt2, wx.ID_ANY, "Feature Extractor-\nSelect Features")
+        sizer_14.Add(self.button_16, 0, 0, 0)
 
         label_7 = wx.StaticText(self.nt2, wx.ID_ANY, "Select the data sources")
         label_7.SetFont(wx.Font(9, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, 0, "Segoe UI"))
@@ -297,7 +408,7 @@ class MyFrame(wx.Frame):
         sizer_11.Add(self.combo_box_1, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 8)
 
         self.button_10 = wx.Button(self.nt2, wx.ID_ANY, "Visualize")
-        sizer_9.Add(self.button_10, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALL, 4)
+        sizer_9.Add(self.button_10, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALL, 7)
 
         self.nt3 = wx.Panel(self.notebook_1, wx.ID_ANY)
         self.notebook_1.AddPage(self.nt3, "Retransmission")
@@ -345,6 +456,7 @@ class MyFrame(wx.Frame):
         self.Bind(wx.EVT_BUTTON, self.on_pause_pressed, self.button_1)
         self.Bind(wx.EVT_BUTTON, self.on_renew_pressed, self.button_3)
         self.Bind(wx.EVT_BUTTON, self.on_end_pressed, self.button_4)
+        self.Bind(wx.EVT_TOGGLEBUTTON, self.on_select_features_pressed, self.button_16)
         self.Bind(wx.EVT_BUTTON, self.on_select_pressed, self.button_7)
         self.Bind(wx.EVT_COMBOBOX, self.on_combo_box_element_selected, self.combo_box_1)
         self.Bind(wx.EVT_BUTTON, self.on_visualize_pressed, self.button_10)
@@ -379,7 +491,7 @@ class MyFrame(wx.Frame):
                 message = f"The target path '{self.target_folder}' already exists as a file."
                 wx.MessageDialog(None, message, "Error", wx.ICON_ERROR | wx.OK)
             print(f"Folder '{self.target_folder}' has been created.")
-            
+
             if self.check_box_1.GetValue():
                 is_emg_used = True
             else:
@@ -394,25 +506,25 @@ class MyFrame(wx.Frame):
                                            aux_port = 50044,
                                            imu = is_imu_used,
                                            emg = is_emg_used,
-                                           channel_list=self.active_sensors)
-            self.odh = OnlineDataHandler(sm)
-            self.odh.log_to_file(file_path=self.target_folder)
+                                          channel_list=self.active_sensors)
+            self.odh_record = OnlineDataHandler(sm)
+            self.odh_record.log_to_file(file_path=self.target_folder)
             
         else:
             wx.MessageDialog(self, "No folder was selected!", "Error", wx.OK | wx.ICON_ERROR)
         event.Skip()
     def on_end_pressed(self, event):  # wxGlade: MyFrame.<event_handler>
-        
-        if self.imu_file:
-            self.last_imu_recording_path = self.imu_file.name
-            self.imu_file.close()
-        if self.emg_file:
-            self.last_emg_recording_path = self.emg_file.name
-            self.emg_file.close()
+        # todo w last recording session to będzie robione
+        # if self.check_box_2.GetValue():
+        #     self.last_imu_recording_path = self.imu_file.name
+        #
+        # if self.check_box_1.GetValue():
+        #     self.last_emg_recording_path = self.emg_file.name
+        self.target_folder = None
         self.output_dir_path = None
         self.default_output_path = False
         self.active_sensors=[]
-        self.odh.stop_log()
+        self.odh_record.stop_log()
         event.Skip()
     def on_default_pressed(self, event):  # wxGlade: MyFrame.<event_handler>
         self.default_output_path = True
@@ -420,7 +532,7 @@ class MyFrame(wx.Frame):
         self.on_confirm_pressed(event)
         event.Skip()
     def on_select_pressed(self, event):  # wxGlade: MyFrame.<event_handler>
-        dialog = MyDialog(self)
+        dialog = SensorsDialog(self)
         if dialog.ShowModal() == wx.ID_OK:
             self.active_sensors = dialog.active_sensors
             print(self.active_sensors)
@@ -433,10 +545,10 @@ class MyFrame(wx.Frame):
             pass
         event.Skip()
     def on_pause_pressed(self, event):  # wxGlade: MyFrame.<event_handler>
-        self.odh.stop_log()
+        self.odh_record.stop_log()
         event.Skip()
     def on_renew_pressed(self, event):  # wxGlade: MyFrame.<event_handler>
-        self.odh.log_to_file(file_path=self.target_folder)
+        self.odh_record.log_to_file(file_path=self.target_folder)
         event.Skip()
     def on_combo_box_element_selected(self, event):  # wxGlade: MyFrame.<event_handler>
         self.combo_choice = self.combo_box_1.GetStringSelection()
@@ -460,7 +572,37 @@ class MyFrame(wx.Frame):
         if self.combo_choice == "Select the file from operating system" or self.combo_choice == "Visualise last recording session":
                 pass
         elif self.combo_choice == "Visualise current recording session":
-            self.odh.visualize_channels(channels=self.active_sensors)
+            streamer, sm = delsys_streamer(emg_port=50043,
+                                           aux_port=50044,
+                                           imu=is_imu_used,
+                                           emg=is_emg_used,
+                                           channel_list=self.active_sensors)
+            self.odh_visualize = OnlineDataHandler(sm)
+
+            if self.button_13.GetValue():
+                self.odh_visualize.visualize()
+            # if self.button_14:
+            #     self.odh_visualize.visualize_channels(channels=self.active_sensors)
+            if self.button_15:
+                self.odh_visualize.visualize_heatmap()
+            # if self.features_histogram:
+            #
+            #     self.feature_extractor = FeatureExtractor()
+            #     features_extracted = {}
+            #     for feature_group in self.selected_features:
+            #         features_tmp = self.feature_extractor.extract_feature_group(feature_group, windows)
+            #         features_extracted = features_extracted.update(features_tmp)
+        self.selected_features = []
+        self.features_histogram = False
+        event.Skip()
+    def on_select_features_pressed(self, event):  # wxGlade: MyFrame.<event_handler>
+
+        dialog = FeaturesDialog(self)
+        if dialog.ShowModal() == wx.ID_OK:
+            self.selected_features = dialog.selected_features
+            print(self.active_sensors)
+            if self.active_sensors:
+                self.features_histogram = True
         event.Skip()
 # end of class MyFrame
 

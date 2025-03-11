@@ -5,8 +5,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ae4644f7-6a71-47d3-8ab1-310b015e7375" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/#~wxg.autosave~userinterface1.wxg#" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/praca_inzynierska.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/praca_inzynierska.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/application_code.py" beforeDir="false" afterPath="$PROJECT_DIR$/application_code.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/application_code.py.bak" beforeDir="false" afterPath="$PROJECT_DIR$/application_code.py.bak" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/delsys_py/inspect delsys.py" beforeDir="false" afterPath="$PROJECT_DIR$/delsys_py/inspect delsys.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/delsys_py/pytrigno_.py" beforeDir="false" afterPath="$PROJECT_DIR$/delsys_py/pytrigno.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/delsys_py/test_libemg.py" beforeDir="false" afterPath="$PROJECT_DIR$/delsys_py/test_libemg.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/userinterface1.wxg" beforeDir="false" afterPath="$PROJECT_DIR$/userinterface1.wxg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/userinterface1.wxg.bak" beforeDir="false" afterPath="$PROJECT_DIR$/userinterface1.wxg.bak" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -24,17 +34,34 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Python.application_code.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python._delsys_streamer.executor": "Run",
+    "Python.application_code.executor": "Run",
+    "Python.data_handler.executor": "Run",
+    "Python.feature_extractor.executor": "Run",
+    "Python.inspect delsys.executor": "Run",
+    "Python.pytrigno_test.executor": "Run",
+    "Python.shared_memory_manager.executor": "Run",
+    "Python.test_libemg.executor": "Run",
+    "Python.test_libemg1.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "C:/Users/Lab412/Desktop/emg_inz/praca_inzynierska",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
   }
-}</component>
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Lab412\Desktop\emg_inz\praca_inzynierska" />
+    </key>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-python-sdk-d7ad00fb9fc3-c546a90a8094-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-242.23726.102" />
+        <option value="bundled-python-sdk-14705d77f0bb-aa17d162503b-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-243.25659.43" />
       </set>
     </attachedChunks>
   </component>
@@ -48,5 +75,16 @@
       <updated>1733345890817</updated>
     </task>
     <servers />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/libemg/libemg/data_handler.py</url>
+          <line>803</line>
+          <option name="timeStamp" value="5" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
