@@ -314,6 +314,8 @@ class OfflineDataHandler(DataHandler):
         data_files = copy.deepcopy(all_files)
         for regex_filter in regex_filters:
             data_files = regex_filter.get_matching_files(data_files)
+        # todo usunac
+        print(all_files)
         print(f"{len(data_files)} data files fetched out of {len(all_files)} files.")
 
         # Read data from files
@@ -433,7 +435,7 @@ class OfflineDataHandler(DataHandler):
                 else:
                     metadata_[k] = np.concatenate((metadata_[k], file_metadata))
 
-            
+
         return windows_, metadata_
 
     
@@ -768,7 +770,8 @@ class OnlineDataHandler(DataHandler):
                 # Only look at the most recent num_samples samples (essentially extracting a single window)
                 data = data[:num_samples]
             # Extract features along each channel
-            windows = data[np.newaxis].transpose(0, 2, 1)   # add axis and tranpose to convert to (windows x channels x samples)
+            windows = data[np.newaxis].transpose(0, 2, 1)
+            # add axis and tranpose to convert to (windows x channels x samples)
             fe = FeatureExtractor()
             feature_set_dict = fe.extract_features(feature_list, windows)
             if remap_function is not None:
@@ -807,14 +810,14 @@ class OnlineDataHandler(DataHandler):
             ax.set_yticks([])
             # ax.set_yticks(range(feature_data.shape[0]))
             im = ax.imshow(np.zeros(shape=feature_data.shape), cmap=cmap, animated=True)
-        #todo nie można po prostu zrobić globalnej bo ta skala jest inna dla każdego innego rzędu
+
             # plt.colorbar(im, ax=ax, fraction=0.1, pad=0.04)
             if  list(sample_data.keys())[-1] == feature_key:
                 ax.set_xticks(range(feature_data.shape[1]))
                 cbar_ax = fig.add_axes([0.85, 0.15, 0.03, 0.7])  # [left, bottom, width, height]
                 fig.colorbar(im, cax=cbar_ax)
             plots.append(im)
-        plt.tight_layout()
+        #plt.tight_layout()
 
         def update(frame):
             # Update function to produce live animation

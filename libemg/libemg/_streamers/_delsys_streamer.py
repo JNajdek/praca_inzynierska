@@ -161,7 +161,7 @@ class DelsysEMGStreamer(Process):
                 A = 1
 
             except Exception as e:
-                print("Error Occurred: " + str(e))
+                #print("Error Occurred: " + str(e))
                 continue
 
             if self.signal.is_set():
