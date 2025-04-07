@@ -35,21 +35,21 @@ class TrignoDataSimulator(multiprocessing.Process):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as self.cmd_socket:
             self.cmd_socket.bind((self.host, self.cmd_port))
             self.cmd_socket.listen(1)
-            print("Oczekiwanie na połączenie z klientem (komendy)...")
+            print("Waiting for connection from client (commands)...")
             conn_cmd, addr = self.cmd_socket.accept()
-            print(f"Połączono z klientem {addr} (komendy)")
+            print(f"Connected to client {addr} (commands)")
 
             while not self.stop_event.is_set():
                 try:
                     conn_cmd.sendall(b"1")
                     cmd_data = conn_cmd.recv(1024).decode().strip()
                     if cmd_data == "START":
-                        print("Odebrano START")
+                        print("Received START")
                         with self.lock:
                             self.running.value = True
                         conn_cmd.sendall(b"OK")
                     elif cmd_data == "STOP":
-                        print("Odebrano STOP")
+                        print("Received STOP")
                         with self.lock:
                             self.running.value = False
                         break
@@ -62,9 +62,9 @@ class TrignoDataSimulator(multiprocessing.Process):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as self.data_socket:
             self.data_socket.bind((self.host, self.data_port))
             self.data_socket.listen(1)
-            print("Oczekiwanie na połączenie dla danych EMG...")
+            print("Waiting for EMG data connection...")
             conn_data, _ = self.data_socket.accept()
-            print("Połączono z klientem dla danych EMG")
+            print("Connected to client for EMG data")
 
             t = 0
             while not self.running.value:
@@ -87,29 +87,34 @@ class TrignoDataSimulator(multiprocessing.Process):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as self.aux_socket:
             self.aux_socket.bind((self.host, self.aux_port))
             self.aux_socket.listen(1)
-            print("Oczekiwanie na połączenie dla danych IMU...")
+            print("Waiting for IMU data connection...")
             conn_aux, _ = self.aux_socket.accept()
-            print("Połączono z klientem dla danych IMU")
+            print("Connected to client for IMU data")
 
+            t = 0
             while not self.running.value:
                 time.sleep(0.1)
 
             while self.running.value:
-                imu_data = np.random.rand(self.num_imu_channels).astype(np.float32)
+                imu_data = np.array([
+                    np.sin(2 * np.pi * self.frequencies[i % 4] * t + (i * np.pi / self.num_imu_channels))
+                    for i in range(self.num_imu_channels)
+                ]).astype(np.float32)
                 imu_data = self.modify_data(imu_data)
                 packet = struct.pack('<' + 'f' * self.num_imu_channels, *imu_data)
                 conn_aux.sendall(packet)
-                time.sleep(0.1)
+                time.sleep(0.01)
+                t += 0.01
 
             conn_aux.close()
-            print("Zamknięto połączenie danych IMU")
+            print("IMU data connection closed")
 
     def stop_transmission(self):
         self.stop_event.set()
         with self.lock:
             self.running.value = False
 
-        print("Zatrzymywanie transmisji...")
+        print("Stopping transmission...")
 
         time.sleep(0.2)
 
@@ -120,7 +125,7 @@ class TrignoDataSimulator(multiprocessing.Process):
         if self.aux_socket:
             self.aux_socket.close()
 
-        print("Zatrzymano transmisję i zamknięto gniazda.")
+        print("Transmission has been stopped and all sockets have been closed.")
 
     def run(self):
         cmd_thread = threading.Thread(target=self.handle_commands, daemon=True)
@@ -135,7 +140,7 @@ class TrignoDataSimulator(multiprocessing.Process):
         emg_thread.join()
         imu_thread.join()
 
-        print("Zakończono działanie wszystkich wątków.")
+        print("All threads successfully terminated.")
 
         # self.terminate()
         # self.join()

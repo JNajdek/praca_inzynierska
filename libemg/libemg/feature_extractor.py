@@ -1559,8 +1559,10 @@ class FeatureExtractor:
                 largest_metric = feature_dic[key].shape[1]
         num_features = len(feature_dic.keys())
         fig, ax = plt.subplots(num_features, largest_metric, figsize=(largest_metric*4, num_features*4))
+        # if len(ax.shape) == 1:
+        #     ax = ax[np.newaxis,:]
         if len(ax.shape) == 1:
-            ax = ax[np.newaxis,:]
+            ax = ax[:, np.newaxis]
         for i, k in enumerate(feature_dic.keys()):
             for f in range(feature_dic[k].shape[1]):
                 if classes is None:
