@@ -429,6 +429,7 @@ class OfflineDataHandler(DataHandler):
                         else:
                             file_metadata = _get_mode_windows(getattr(self,k)[i], window_size, window_increment)
                     else:
+                        print(getattr(self,k)[i])
                         file_metadata = _get_mode_windows(getattr(self,k)[i], window_size, window_increment)
                 if k not in metadata_.keys():
                     metadata_[k] = file_metadata

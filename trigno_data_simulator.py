@@ -16,7 +16,7 @@ class TrignoDataSimulator(multiprocessing.Process):
 
         self.num_emg_channels = 16
         self.num_imu_channels = 16 * 9
-        self.frequencies = [1, 5, 7, 8]
+        self.frequencies = [0.25, 0.5, 1, 2]
 
         self.running = multiprocessing.Value('b', False)
         self.stop_event = multiprocessing.Event()

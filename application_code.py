@@ -74,10 +74,10 @@ class DialogAdjustVisualization(wx.Dialog):
 
         if self.mode == 'Offline':
             self.SetSize((500, 400))
-            self.SetTitle("dialog")
+            self.SetTitle("Additional Data Offline")
         if self.mode == 'Online':
             self.SetSize((500, 200))
-            self.SetTitle("dialog")
+            self.SetTitle("Additional Data Online")
 
         sizer_1 = wx.BoxSizer(wx.VERTICAL)
 
@@ -91,7 +91,7 @@ class DialogAdjustVisualization(wx.Dialog):
         label_1 = wx.StaticText(self, wx.ID_ANY, "Enter the number of samples used\n for visualization")
         sizer_3.Add(label_1, 0, 0, 0)
 
-        self.spin_ctrl_1 = wx.SpinCtrl(self, wx.ID_ANY, "1", min=1, max=100)
+        self.spin_ctrl_1 = wx.SpinCtrl(self, wx.ID_ANY, "500", min=1, max=1500)
         sizer_3.Add(self.spin_ctrl_1, 0, wx.LEFT, 60)
 
         if self.mode == "Offline":
@@ -101,7 +101,7 @@ class DialogAdjustVisualization(wx.Dialog):
             label_2 = wx.StaticText(self, wx.ID_ANY, "Enter the number of samples in a window")
             sizer_4.Add(label_2, 0, 0, 0)
 
-            self.spin_ctrl_2 = wx.SpinCtrl(self, wx.ID_ANY, "0", min=0, max=100)
+            self.spin_ctrl_2 = wx.SpinCtrl(self, wx.ID_ANY, "20", min=0, max=1500)
             sizer_4.Add(self.spin_ctrl_2, 0, wx.LEFT, 25)
 
             sizer_5 = wx.BoxSizer(wx.HORIZONTAL)
@@ -110,7 +110,7 @@ class DialogAdjustVisualization(wx.Dialog):
             label_3 = wx.StaticText(self, wx.ID_ANY, "Enter the number of samples\n that advances before next window")
             sizer_5.Add(label_3, 0, 0, 0)
 
-            self.spin_ctrl_3 = wx.SpinCtrl(self, wx.ID_ANY, "0", min=0, max=100)
+            self.spin_ctrl_3 = wx.SpinCtrl(self, wx.ID_ANY, "10", min=0, max=1500)
             sizer_5.Add(self.spin_ctrl_3, 0, wx.LEFT, 60)
 
         sizer_2 = wx.StdDialogButtonSizer()
@@ -136,7 +136,7 @@ class DialogAdjustVisualization(wx.Dialog):
         self.visualization_additional_data["num_samples"] = self.spin_ctrl_1.GetValue()
         if self.mode == "Offline":
             self.visualization_additional_data["window_size"] = self.spin_ctrl_2.GetValue()
-            self.visualization_additional_data["windows_increment"] = self.spin_ctrl_3.GetValue()
+            self.visualization_additional_data["window_increment"] = self.spin_ctrl_3.GetValue()
         self.EndModal(wx.ID_OK)
         event.Skip()
 
@@ -146,7 +146,7 @@ class FeaturesDialog(wx.Dialog):
         # begin wxGlade: FeaturesDialog.__init__
         kwds["style"] = kwds.get("style", 0) | wx.DEFAULT_DIALOG_STYLE
         wx.Dialog.__init__(self, *args, **kwds)
-        self.SetTitle("dialog")
+        self.SetTitle("Features dialog")
 
         sizer_1 = wx.BoxSizer(wx.VERTICAL)
 
@@ -211,8 +211,10 @@ class FeaturesDialog(wx.Dialog):
         event.Skip()
 # end of class FeaturesDialog
 class SensorsDialog(wx.Dialog):
-    def __init__(self, *args, **kwds):
+    def __init__(self, mode="visualize",*args, **kwds):
+        self.mode = mode
         self.active_sensors = []
+        self.metadata_labels = ["Timestamps"]
         # begin wxGlade: SensorsDialog.__init__
         kwds["style"] = kwds.get("style", 0) | wx.DEFAULT_DIALOG_STYLE
         wx.Dialog.__init__(self, *args, **kwds)
@@ -244,6 +246,26 @@ class SensorsDialog(wx.Dialog):
         self.toggle_btn_4 = wx.ToggleButton(self, wx.ID_ANY, "Sensor 4")
         sizer_4.Add(self.toggle_btn_4, 0, wx.ALL, 4)
 
+        sizer_7 = wx.BoxSizer(wx.VERTICAL)
+        sizer_3.Add(sizer_7, 1, wx.EXPAND, 0)
+
+        if self.mode == "record":
+
+            self.text_ctrl_1 = wx.TextCtrl(self, wx.ID_ANY, "Sensor1")
+            sizer_7.Add(self.text_ctrl_1, 0, wx.ALL, 4)
+
+            self.text_ctrl_2 = wx.TextCtrl(self, wx.ID_ANY, "Sensor2")
+            sizer_7.Add(self.text_ctrl_2, 0, wx.ALL, 4)
+
+            self.text_ctrl_3 = wx.TextCtrl(self, wx.ID_ANY, "Sensor3")
+            sizer_7.Add(self.text_ctrl_3, 0, wx.ALL, 4)
+
+            self.text_ctrl_4 = wx.TextCtrl(self, wx.ID_ANY, "Sensor4")
+            sizer_7.Add(self.text_ctrl_4, 0, wx.ALL, 4)
+
+        if self.mode == "record":
+            sizer_3.Add((120, 20), 0, 0, 0)
+
         sizer_5 = wx.BoxSizer(wx.VERTICAL)
         sizer_3.Add(sizer_5, 1, wx.EXPAND, 0)
 
@@ -258,6 +280,22 @@ class SensorsDialog(wx.Dialog):
 
         self.toggle_btn_8 = wx.ToggleButton(self, wx.ID_ANY, "Sensor 8")
         sizer_5.Add(self.toggle_btn_8, 0, wx.ALL, 4)
+
+        if self.mode =="record":
+            sizer_6 = wx.BoxSizer(wx.VERTICAL)
+            sizer_3.Add(sizer_6, 1, wx.EXPAND, 0)
+
+            self.text_ctrl_5 = wx.TextCtrl(self, wx.ID_ANY, "Sensor5")
+            sizer_6.Add(self.text_ctrl_5, 0, wx.ALL, 4)
+
+            self.text_ctrl_6 = wx.TextCtrl(self, wx.ID_ANY, "Sensor6")
+            sizer_6.Add(self.text_ctrl_6, 0, wx.ALL, 4)
+
+            self.text_ctrl_7 = wx.TextCtrl(self, wx.ID_ANY, "Sensor7")
+            sizer_6.Add(self.text_ctrl_7, 0, wx.ALL, 4)
+
+            self.text_ctrl_8 = wx.TextCtrl(self, wx.ID_ANY, "Sensor8")
+            sizer_6.Add(self.text_ctrl_8, 0, wx.ALL, 4)
 
         sizer_3.Add((20, 0), 0, 0, 0)
 
@@ -289,25 +327,64 @@ class SensorsDialog(wx.Dialog):
 
 
     def on_ok_pressed(self, event):  # wxGlade: SensorsDialog.<event_handler>
-        if self.toggle_btn_1.GetValue():
-            self.active_sensors.append(0)
-        if self.toggle_btn_2.GetValue():
-            self.active_sensors.append(1)
-        if self.toggle_btn_3.GetValue():
-            self.active_sensors.append(2)
-        if self.toggle_btn_4.GetValue():
-            self.active_sensors.append(3)
-        if self.toggle_btn_5.GetValue():
-            self.active_sensors.append(4)
-        if self.toggle_btn_6.GetValue():
-            self.active_sensors.append(5)
-        if self.toggle_btn_7.GetValue():
-            self.active_sensors.append(6)
-        if self.toggle_btn_8.GetValue():
-            self.active_sensors.append(7)
-        self.EndModal(wx.ID_OK)
-        event.Skip()
+        if self.mode == "record":
+            if self.toggle_btn_1.GetValue():
+                self.active_sensors.append(0)
+                self.metadata_labels.append(self.text_ctrl_1.GetValue())
+            if self.toggle_btn_2.GetValue():
+                self.active_sensors.append(1)
+                self.metadata_labels.append(self.text_ctrl_2.GetValue())
+            if self.toggle_btn_3.GetValue():
+                self.active_sensors.append(2)
+                self.metadata_labels.append(self.text_ctrl_3.GetValue())
+            if self.toggle_btn_4.GetValue():
+                self.active_sensors.append(3)
+                self.metadata_labels.append(self.text_ctrl_4.GetValue())
+            if self.toggle_btn_5.GetValue():
+                self.active_sensors.append(4)
+                self.metadata_labels.append(self.text_ctrl_5.GetValue())
+            if self.toggle_btn_6.GetValue():
+                self.active_sensors.append(5)
+                self.metadata_labels.append(self.text_ctrl_6.GetValue())
+            if self.toggle_btn_7.GetValue():
+                self.metadata_labels.append(self.text_ctrl_7.GetValue())
+                self.active_sensors.append(6)
+            if self.toggle_btn_8.GetValue():
+                self.metadata_labels.append(self.text_ctrl_8.GetValue())
+                self.active_sensors.append(7)
+            if not self.validate_metadata():
+                self.active_sensors = []
+                self.metadata_labels = []
+                
+            else:
+                self.EndModal(wx.ID_OK)
+                event.Skip()
+        else:
+            if self.toggle_btn_1.GetValue():
+                self.active_sensors.append(0)
+            if self.toggle_btn_2.GetValue():
+                self.active_sensors.append(1)
+            if self.toggle_btn_3.GetValue():
+                self.active_sensors.append(2)
+            if self.toggle_btn_4.GetValue():
+                self.active_sensors.append(3)
+            if self.toggle_btn_5.GetValue():
+                self.active_sensors.append(4)
+            if self.toggle_btn_6.GetValue():
+                self.active_sensors.append(5)
+            if self.toggle_btn_7.GetValue():
+                self.active_sensors.append(6)
+            if self.toggle_btn_8.GetValue():
+                self.active_sensors.append(7)
+            self.EndModal(wx.ID_OK)
+            event.Skip()
 
+    def validate_metadata(self):
+        for item in self.metadata_labels:
+            if ' ' in item:
+                wx.MessageBox("Metadata cannot contain spaces.", "Validation Error", wx.OK | wx.ICON_ERROR)
+                return False
+        return True
 # end of class SensorsDialog
 class DialogOffline(wx.Dialog):
     def __init__(self, *args, **kwds):
@@ -323,7 +400,7 @@ class MyFrame(wx.Frame):
         kwds["style"] = kwds.get("style", 0) | wx.DEFAULT_FRAME_STYLE
         wx.Frame.__init__(self, *args, **kwds)
         self.SetSize((1100, 600))
-        self.SetTitle("frame")
+        self.SetTitle("EMG acquisition and visualisation app")
 
         self.panel_1 = wx.Panel(self, wx.ID_ANY)
 
@@ -422,14 +499,17 @@ class MyFrame(wx.Frame):
 
         self.button_1 = wx.Button(self.panel_10, wx.ID_ANY, "Pause")
         self.button_1.SetMinSize((60, 25))
+        self.button_1.Enable(False)
         sizer_5.Add(self.button_1, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 15)
 
         self.button_3 = wx.Button(self.panel_10, wx.ID_ANY, "Renew\n")
         self.button_3.SetMinSize((60, 25))
+        self.button_3.Enable(False)
         sizer_5.Add(self.button_3, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 15)
 
         self.button_4 = wx.Button(self.panel_10, wx.ID_ANY, "End\n")
         self.button_4.SetMinSize((60, 25))
+        self.button_4.Enable(False)
         sizer_5.Add(self.button_4, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 15)
 
         sizer_5.Add((2, 0), 0, 0, 0)
@@ -471,7 +551,7 @@ class MyFrame(wx.Frame):
 
         sizer_35.Add((0, 20), 0, 0, 0)
 
-        self.combo_box_1 = wx.ComboBox(self.panel_9, wx.ID_ANY, choices=["Visualise current recording session", "Visualise last recording session", "Select the directory from operating system", ""], style=wx.CB_READONLY)
+        self.combo_box_1 = wx.ComboBox(self.panel_9, wx.ID_ANY, choices=["Visualise current data transmission", "Visualise last recording session", "Select the directory from operating system", ""], style=wx.CB_READONLY)
         sizer_35.Add(self.combo_box_1, 0, wx.ALL, 8)
 
         sizer_35.Add((0, 20), 0, 0, 0)
@@ -665,13 +745,13 @@ class MyFrame(wx.Frame):
 
         self.button_5.Bind(wx.EVT_BUTTON, self.on_confirm_pressed)
         self.button_8.Bind(wx.EVT_BUTTON, self.on_default_pressed)
-        self.button_6.Bind(wx.EVT_BUTTON, self.on_select_pressed)
+        self.button_6.Bind(wx.EVT_BUTTON, self.on_select_pressed_rec)
         self.button_2.Bind(wx.EVT_BUTTON, self.on_start_pressed)
         self.button_1.Bind(wx.EVT_BUTTON, self.on_pause_pressed)
         self.button_3.Bind(wx.EVT_BUTTON, self.on_renew_pressed)
         self.button_4.Bind(wx.EVT_BUTTON, self.on_end_pressed)
         self.combo_box_1.Bind(wx.EVT_COMBOBOX, self.on_combo_box_element_selected)
-        self.button_7.Bind(wx.EVT_BUTTON, self.on_select_pressed)
+        self.button_7.Bind(wx.EVT_BUTTON, self.on_select_pressed_vis)
         self.button_ht.Bind(wx.EVT_TOGGLEBUTTON, self.on_heatmap_pressed)
         self.button_18.Bind(wx.EVT_BUTTON, self.on_adjust_online)
         self.button_vsf.Bind(wx.EVT_TOGGLEBUTTON, self.on_visualize_selected_features)
@@ -702,6 +782,13 @@ class MyFrame(wx.Frame):
         self.odh_visualize = None
         self.combo_choice = None
         self.streamer_visualize = None
+        self.odh_record = None
+        self.lock_tabs = False
+        self.metadata_labels = []
+
+    def on_page_changing(self, event):
+        if self.lock_tabs:
+            event.Veto()
 
     def on_confirm_pressed(self, event):  # wxGlade: MyFrame.<event_handler>
         if not self.default_output_path:
@@ -711,7 +798,7 @@ class MyFrame(wx.Frame):
             path = './data_records'
             normalized_path = os.path.abspath(path)
 
-        if os.path.isabs(normalized_path):
+        if os.path.isabs(normalized_path) and  os.path.isdir(normalized_path):
             wx.MessageBox("The path format is valid.", "Validation Result", wx.OK | wx.ICON_INFORMATION)
             self.output_dir_path = normalized_path
         else:
@@ -724,6 +811,7 @@ class MyFrame(wx.Frame):
             self.target_folder = os.path.join(self.output_dir_path, f"recorded_data_{current_datetime}")
 
             if not os.path.exists(self.target_folder):
+                print(self.target_folder)
                 os.makedirs(self.target_folder)
             else:
                 # Create and show the error message box
@@ -740,7 +828,20 @@ class MyFrame(wx.Frame):
                 is_imu_used = True
             else:
                 is_imu_used = False
-                
+
+            if is_emg_used:
+                self.save_metadata(self.metadata_labels,os.path.join(self.target_folder, 'metadata_emg') )
+            if is_imu_used:
+                metadata_labels_imu = []
+                for item in self.metadata_labels:
+                    for i in range(1, 10):
+                        if item == "Timestamps":
+                            metadata_labels_imu.append(item)
+                            break
+                        metadata_labels_imu.append(f"{item}.{i}")
+
+                self.save_metadata(metadata_labels_imu,os.path.join(self.target_folder, 'metadata_imu') )
+
             streamer, sm = delsys_streamer(emg_port = 50043,
                                            aux_port = 50044,
                                            imu = is_imu_used,
@@ -748,7 +849,10 @@ class MyFrame(wx.Frame):
                                           channel_list=self.active_sensors)
             self.odh_record = OnlineDataHandler(sm)
             self.odh_record.log_to_file(file_path=os.path.join(self.target_folder, '_'))
-            
+            self.lock_tabs = True
+            self.button_1.Enable(True)
+            self.button_2.Enable(False)
+            self.button_4.Enable(True)
         else:
             wx.MessageDialog(self, "No folder was selected!", "Error", wx.OK | wx.ICON_ERROR)
         event.Skip()
@@ -760,14 +864,29 @@ class MyFrame(wx.Frame):
         self.default_output_path = False
         self.active_sensors=[]
         self.odh_record.stop_log()
+        self.lock_tabs = False
+        self.button_4.Enable(False)
+        self.button_1.Enable(False)
+        self.button_3.Enable(False)
+        self.button_2.Enable(True)
+        self.check_box_1.SetValue(False)
+        self.check_box_2.SetValue(False)
         event.Skip()
     def on_default_pressed(self, event):  # wxGlade: MyFrame.<event_handler>
         self.default_output_path = True
         wx.MessageBox("The data will be saved to ./data_records folder", "Validation Result", wx.OK | wx.ICON_INFORMATION)
         self.on_confirm_pressed(event)
         event.Skip()
-    def on_select_pressed(self, event):  # wxGlade: MyFrame.<event_handler>
-        dialog = SensorsDialog(self)
+    def on_select_pressed_rec(self, event):  # wxGlade: MyFrame.<event_handler>
+        dialog = SensorsDialog("record",self)
+        if dialog.ShowModal() == wx.ID_OK:
+            self.active_sensors = dialog.active_sensors
+            self.metadata_labels = dialog.metadata_labels
+            print(f"active sensors: {self.active_sensors}")
+
+        event.Skip()
+    def on_select_pressed_vis(self, event):  # wxGlade: MyFrame.<event_handler>
+        dialog = SensorsDialog("visualize",self)
         if dialog.ShowModal() == wx.ID_OK:
             self.active_sensors = dialog.active_sensors
             print(f"active sensors: {self.active_sensors}")
@@ -785,8 +904,14 @@ class MyFrame(wx.Frame):
         event.Skip()
     def on_pause_pressed(self, event):  # wxGlade: MyFrame.<event_handler>
         self.odh_record.stop_log()
+        self.button_1.Enable(False)
+        self.button_4.Enable(False)
+        self.button_3.Enable(True)
         event.Skip()
     def on_renew_pressed(self, event):  # wxGlade: MyFrame.<event_handler>
+        self.button_4.Enable(True)
+        self.button_1.Enable(True)
+        self.button_3.Enable(False)
         self.odh_record.log_to_file(file_path=os.path.join(self.target_folder, '_'))
         event.Skip()
     def on_combo_box_element_selected(self, event):  # wxGlade: MyFrame.<event_handler>
@@ -839,7 +964,7 @@ class MyFrame(wx.Frame):
             self.panel_3.Show()
             self.panel_3.Raise()
 
-        if self.combo_choice == "Visualise current recording session":
+        if self.combo_choice == "Visualise current data transmission":
             self.panel_2.Show()
             self.panel_2.Raise()
 
@@ -850,7 +975,7 @@ class MyFrame(wx.Frame):
     def on_visualize_pressed(self, event):  # wxGlade: MyFrame.<event_handler>
         if self.button_10.GetValue():
             self.regex_filters = []
-
+            self.lock_tabs = True
 
             if self.checkbox_3.GetValue() and self.checkbox_4.GetValue():
                 is_emg_used = True
@@ -902,7 +1027,7 @@ class MyFrame(wx.Frame):
                         feature_set_dict, fe = self.create_visualization_parameters_offline(self.selected_features_dist_sep, "imu")
                         fe.visualize_single_distributions(feature_set_dict,render=True)
 
-            elif self.combo_choice == "Visualise current recording session":
+            elif self.combo_choice == "Visualise current data transmission":
                 self.streamer_visualize, sm = delsys_streamer(emg_port=50043,
                                                aux_port=50044,
                                                imu=is_imu_used,
@@ -917,7 +1042,8 @@ class MyFrame(wx.Frame):
                     self.odh_visualize.visualize_heatmap(self.visualization_additional_data["num_samples"],self.selected_features_heatmap)
 
         else:
-            if self.combo_choice == "Visualise current recording session":
+            self.lock_tabs = False
+            if self.combo_choice == "Visualise current data transmission":
                 self.odh_visualize.stop_visualize()
                 self.streamer_visualize.signal.set()
                 self.button_ht.SetValue(False)
@@ -995,9 +1121,9 @@ class MyFrame(wx.Frame):
             channels.extend(range(start_channel, start_channel + 9))
 
         group_map = {
-            0: [0, 1, 2],
-            1: [3, 4, 5],
-            2: [6, 7, 8]
+            0: [1, 2, 3],
+            1: [4, 5, 6],
+            2: [7, 8, 9]
         }
         allowed_channels = set(channels)
         checked = self.popup.lb.GetCheckedItems()
@@ -1024,26 +1150,34 @@ class MyFrame(wx.Frame):
             channels_isolated = self.transform_channels_for_imu(channels_isolated)
         if emg_or_imu != 'emg' and emg_or_imu != 'imu':
             right_bound = "Unreachable"
-
+        print(channels_isolated)
         ofdh_new = self._create_adjusted_data_handler(right_bound, channels_isolated)
-        if mode == 'Standard':
-            windows, _ = ofdh_new.parse_windows(3, 3)
-        else:
-            windows, _ = ofdh_new.parse_windows(self.visualization_additional_data["window_size"],
-                                                self.visualization_additional_data["window_increment"])
+        try:
+            if mode == 'Standard':
+                windows, _ = ofdh_new.parse_windows(3, 3)
+            else:
+                windows, _ = ofdh_new.parse_windows(self.visualization_additional_data["window_size"],
+                                                    self.visualization_additional_data["window_increment"])
+        except AttributeError:
+            wx.MessageBox("You selected channels not present in the data file",
+                          "Invalid Channel Selection",
+                          wx.OK | wx.ICON_ERROR)
+            return None, FeatureExtractor()
         fe = FeatureExtractor()
-        feature_set_dict = fe.extract_features(features_list, windows)
+        feature_set_dict = fe.extract_features(features_list, windows[:self.visualization_additional_data["num_samples"]])
         return feature_set_dict, fe
 
     def _create_adjusted_data_handler(self, right_bound, channels_isolated):
         ofdh = OfflineDataHandler()
-        print(right_bound)
         regex_filter = RegexFilter(left_bound='/', right_bound=right_bound, values=['_'], description='emg or imu')
         ofdh.get_data(folder_location=self.folder_visualize, regex_filters=[regex_filter], delimiter=' ')
-        print(f"channels isloated: {channels_isolated}")
         ofdh_new = ofdh.isolate_channels(channels_isolated)
         return ofdh_new
 
+    @staticmethod
+    def save_metadata(metadata, filepath):
+        with open(filepath, 'w', encoding='utf-8') as f:
+            f.write(' '.join(str(element) for element in metadata))
 
 class MyApp(wx.App):
     def OnInit(self):
